@@ -22,6 +22,7 @@ export class RedisService {
 
   async set(key: string, value: string): Promise<void> {
     await this.client.set(key, value);
+    await this.client.expire(key, 7); // Set expiration time to 2 hours (7200 seconds)
   }
 
   async get(key: string): Promise<string | null> {
@@ -64,7 +65,4 @@ export class RedisService {
       .filter((data) => data && data.timestamp > oneHourAgo)
       .map((data) => data.value);
   }
-  
-  
-  
 }

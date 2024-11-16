@@ -23,6 +23,6 @@ export class TemperatureService {
   }
 
   private generateRandomNumber(min: number, max: number): number {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    return parseFloat((Math.random() * (max - min) + min).toFixed(2));
   }
 }
