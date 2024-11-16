@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { Injectable, Logger } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
+import { Cron, Interval } from '@nestjs/schedule';
 import { ProducerService } from '../../kafka/producer/producer.service'; 
 
 @Injectable()
@@ -9,7 +9,8 @@ export class TemperatureService {
 
   constructor(private readonly producerService: ProducerService) {} // Inject ProducerService
 
-  @Cron('*/1 * * * * *')
+  // @Cron('*/1 * * * * *')
+  @Interval(500)
   async handleCron() {
     const temperature = this.generateRandomNumber(20, 30);
     this.logger.log(`Temperature: ${temperature}°C`);

@@ -18,36 +18,44 @@ export class KafkaConsumerInitService implements OnModuleInit {
       {
         eachMessage: async ({ message }) => {
           const value = message.value?.toString();
-          console.log(`Received temperature data: ${value}`);
-          await this.redisService.set('temperature_data', value);
+          const parsedValue = JSON.parse(value); // Ensure value is valid JSON
+          const timestampedValue = `${new Date().toISOString()} - ${JSON.stringify(parsedValue)}`;
+          console.log(`Received temperature data: ${timestampedValue}`);
+          await this.redisService.pushToList(
+            'temperature_data',
+            timestampedValue,
+          );
         },
       },
     );
 
-    // Humidity
-    await this.consumerService.consume(
-      'humidity-group',
-      { topic: 'humidity_data' },
-      {
-        eachMessage: async ({ message }) => {
-          const value = message.value?.toString();
-          console.log(`Received humidity data: ${value}`);
-          await this.redisService.set('humidity_data', value);
-        },
-      },
-    );
-
-    // Product Count
-    await this.consumerService.consume(
-      'product-count-group',
-      { topic: 'product_count_data' },
-      {
-        eachMessage: async ({ message }) => {
-          const value = message.value?.toString();
-          console.log(`Received product data: ${value}`);
-          await this.redisService.set('product_count_data', value);
-        },
-      },
-    );
+// Humidity
+await this.consumerService.consume(
+  'humidity-group',
+  { topic: 'humidity_data' },
+  {
+    eachMessage: async ({ message }) => {
+      const value = message.value?.toString();
+      const parsedValue = JSON.parse(value); // Parse JSON data
+      const timestampedValue = `${new Date().toISOString()} - ${JSON.stringify(parsedValue)}`;
+      console.log(`Received humidity data: ${timestampedValue}`);
+      await this.redisService.pushToList('humidity_data', timestampedValue);
+    },
+  },
+);
+   // Product Count
+await this.consumerService.consume(
+  'product-count-group',
+  { topic: 'product_count_data' },
+  {
+    eachMessage: async ({ message }) => {
+      const value = message.value?.toString();
+      const parsedValue = JSON.parse(value); // Parse JSON data
+      const timestampedValue = `${new Date().toISOString()} - ${JSON.stringify(parsedValue)}`;
+      console.log(`Received product data: ${timestampedValue}`);
+      await this.redisService.pushToList('product_count_data', timestampedValue);
+    },
+  },
+);
   }
 }

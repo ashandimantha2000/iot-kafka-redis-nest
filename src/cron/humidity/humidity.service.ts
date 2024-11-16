@@ -9,7 +9,7 @@ export class HumidityService {
 
   constructor(private readonly producerService: ProducerService) {} // Inject ProducerService
 
-  @Cron('*/2 * * * * *') // Runs every 2 seconds
+  @Cron('*/1 * * * * *') // Runs every 2 seconds
   async handleCron() {
     const humidity = this.generateRandomNumber(20, 50);
 
