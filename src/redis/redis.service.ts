@@ -7,7 +7,7 @@ export class RedisService {
   private client;
 
   constructor() {
-    this.client = createClient({ url: 'redis://localhost:6379' });
+    this.client = createClient({ url: 'redis://0.0.0.0:6379' });
     this.client.connect();
     this.client.on('error', (err) => console.error('Redis Client Error', err));
   }
@@ -40,8 +40,8 @@ export class RedisService {
           const [timestamp, jsonString] = entry.split(' - ');
           const parsedJson = JSON.parse(jsonString);
   
-          // Extract the relevant value from the JSON
-          let numericValue: number | null = null;
+          // Extract value from the JSON
+          let numericValue: number | null = null; //number or null
           if (parsedJson.temperature !== undefined) {
             numericValue = parsedJson.temperature; // For temperature
           } else if (parsedJson.humidity !== undefined) {
@@ -50,7 +50,7 @@ export class RedisService {
             numericValue = parsedJson.productCount; // For product count
           }
   
-          // Handle cases where the value is invalid or undefined
+          // value is invalid or undefined (after the error)
           if (numericValue === null || isNaN(numericValue)) {
             console.warn(`Invalid or missing numeric value in entry: ${entry}`);
             return null;

@@ -49,7 +49,7 @@ export class MetricsController {
   @Get('temperature/average')
   async getTemperatureAverage(): Promise<number> {
     const data = await this.redisService.filterLastHourData('temperature_data');
-    const numericData = data.filter(value => typeof value === 'number');
+    const numericData = data.filter(value => typeof value === 'number'); //to ensure only numeric values are processed
     return numericData.length > 0 ? parseFloat((numericData.reduce((sum, value) => sum + value, 0) / numericData.length).toFixed(2)) : 0;
   }
 
@@ -57,6 +57,7 @@ export class MetricsController {
   @Get('humidity/average')
   async getHumidityAverage(): Promise<number> {
     const data = await this.redisService.filterLastHourData('humidity_data');
+    //data.reduce is used to get arrays -> single value
     return data.length > 0 ? parseFloat((data.reduce((sum, value) => sum + value, 0) / data.length).toFixed(2)) : 0;
   }
 
@@ -73,6 +74,7 @@ export class MetricsController {
   async getMaxTemperature(): Promise<number> {
     const data = await this.redisService.filterLastHourData('temperature_data');
     const numericData = data.filter(value => typeof value === 'number');
+    //spread operator is used to expand an iterable (like an array or object) into individual elements
     return numericData.length > 0 ? parseFloat(Math.max(...numericData).toFixed(2)) : 0;
   }
 

@@ -1,4 +1,5 @@
 /* eslint-disable prettier/prettier */
+//Name of this file is may be like humidity.cosumer.ts, temperature.consumer.ts .... But here I combined them and add them to here.
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConsumerService } from '../kafka/consumer/consumer.service';
 import { RedisService } from '../redis/redis.service';
@@ -18,7 +19,7 @@ export class KafkaConsumerInitService implements OnModuleInit {
       {
         eachMessage: async ({ message }) => {
           const value = message.value?.toString();
-          const parsedValue = JSON.parse(value); // Ensure value is valid JSON
+          const parsedValue = JSON.parse(value);
           const timestampedValue = `${new Date().toISOString()} - ${JSON.stringify(parsedValue)}`;
           console.log(`Received temperature data: ${timestampedValue}`);
           await this.redisService.pushToList(
@@ -29,33 +30,36 @@ export class KafkaConsumerInitService implements OnModuleInit {
       },
     );
 
-// Humidity
-await this.consumerService.consume(
-  'humidity-group',
-  { topic: 'humidity_data' },
-  {
-    eachMessage: async ({ message }) => {
-      const value = message.value?.toString();
-      const parsedValue = JSON.parse(value); // Parse JSON data
-      const timestampedValue = `${new Date().toISOString()} - ${JSON.stringify(parsedValue)}`;
-      console.log(`Received humidity data: ${timestampedValue}`);
-      await this.redisService.pushToList('humidity_data', timestampedValue);
-    },
-  },
-);
-   // Product Count
-await this.consumerService.consume(
-  'product-count-group',
-  { topic: 'product_count_data' },
-  {
-    eachMessage: async ({ message }) => {
-      const value = message.value?.toString();
-      const parsedValue = JSON.parse(value); // Parse JSON data
-      const timestampedValue = `${new Date().toISOString()} - ${JSON.stringify(parsedValue)}`;
-      console.log(`Received product data: ${timestampedValue}`);
-      await this.redisService.pushToList('product_count_data', timestampedValue);
-    },
-  },
-);
+    // Humidity
+    await this.consumerService.consume(
+      'humidity-group',
+      { topic: 'humidity_data' },
+      {
+        eachMessage: async ({ message }) => {
+          const value = message.value?.toString();
+          const parsedValue = JSON.parse(value);
+          const timestampedValue = `${new Date().toISOString()} - ${JSON.stringify(parsedValue)}`;
+          console.log(`Received humidity data: ${timestampedValue}`);
+          await this.redisService.pushToList('humidity_data', timestampedValue);
+        },
+      },
+    );
+    // Product Count
+    await this.consumerService.consume(
+      'product-count-group',
+      { topic: 'product_count_data' },
+      {
+        eachMessage: async ({ message }) => {
+          const value = message.value?.toString();
+          const parsedValue = JSON.parse(value);
+          const timestampedValue = `${new Date().toISOString()} - ${JSON.stringify(parsedValue)}`;
+          console.log(`Received product data: ${timestampedValue}`);
+          await this.redisService.pushToList(
+            'product_count_data',
+            timestampedValue,
+          );
+        },
+      },
+    );
   }
 }
