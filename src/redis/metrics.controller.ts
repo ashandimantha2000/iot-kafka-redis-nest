@@ -50,22 +50,21 @@ export class MetricsController {
   async getTemperatureAverage(): Promise<number> {
     const data = await this.redisService.filterLastHourData('temperature_data');
     const numericData = data.filter(value => typeof value === 'number');
-    return numericData.length > 0 ? numericData.reduce((sum, value) => sum + value, 0) / numericData.length : 0;
+    return numericData.length > 0 ? parseFloat((numericData.reduce((sum, value) => sum + value, 0) / numericData.length).toFixed(2)) : 0;
   }
 
   //humidity average
   @Get('humidity/average')
   async getHumidityAverage(): Promise<number> {
     const data = await this.redisService.filterLastHourData('humidity_data');
-    return data.length > 0 ? data.reduce((sum, value) => sum + value, 0) / data.length : 0;
+    return data.length > 0 ? parseFloat((data.reduce((sum, value) => sum + value, 0) / data.length).toFixed(2)) : 0;
   }
 
   //product count average
   @Get('product-count/average')
   async getProductCountAverage(): Promise<number> {
     const data = await this.redisService.filterLastHourData('product_count_data');
-    // console.log('hehe is' +data)
-    return data.length > 0 ? data.reduce((sum, value) => sum + value, 0) / data.length : 0;
+    return data.length > 0 ? parseFloat((data.reduce((sum, value) => sum + value, 0) / data.length).toFixed(2)) : 0;
   }
 
   //Maximum values
@@ -74,7 +73,7 @@ export class MetricsController {
   async getMaxTemperature(): Promise<number> {
     const data = await this.redisService.filterLastHourData('temperature_data');
     const numericData = data.filter(value => typeof value === 'number');
-    return numericData.length > 0 ? Math.max(...numericData) : 0;
+    return numericData.length > 0 ? parseFloat(Math.max(...numericData).toFixed(2)) : 0;
   }
 
   //humidity max
@@ -82,7 +81,7 @@ export class MetricsController {
   async getMaxHumidity(): Promise<number> {
     const data = await this.redisService.filterLastHourData('humidity_data');
     const numericData = data.filter(value => typeof value === 'number');
-    return numericData.length > 0 ? Math.max(...numericData) : 0;
+    return numericData.length > 0 ? parseFloat(Math.max(...numericData).toFixed(2)) : 0;
   }
 
   //product count max
@@ -90,6 +89,6 @@ export class MetricsController {
   async getMaxProductCount(): Promise<number> {
     const data = await this.redisService.filterLastHourData('product_count_data');
     const numericData = data.filter(value => typeof value === 'number');
-    return numericData.length > 0 ? Math.max(...numericData) : 0;
+    return numericData.length > 0 ? parseFloat(Math.max(...numericData).toFixed(2)) : 0;
   }
 }
